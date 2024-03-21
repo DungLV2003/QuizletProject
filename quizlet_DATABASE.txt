@@ -1,0 +1,112 @@
+CREATE DATABASE quizlet
+USE quizlet
+
+CREATE TABLE role (
+    role_id int PRIMARY KEY IDENTITY(1,1),
+    role_name VARCHAR(100) NOT NULL
+)
+INSERT INTO role (role_name) VALUES
+( 'admin'),
+( 'questioner'),
+('answerer');
+
+
+-- Users table
+CREATE TABLE Users (
+    user_id INT PRIMARY KEY IDENTITY(1,1),
+    username NVARCHAR(255) NOT NULL,
+    Password NVARCHAR(255) NOT NULL,
+    role_id INT NOT NULL
+	FOREIGN KEY (role_id) REFERENCES role(role_Id)
+);
+
+-- Insert sample data into Users table
+INSERT INTO Users (username, Password, role_id)
+VALUES 
+    ('admin', '12345', 1),
+    ('questioner1', '12345', 2),
+	('questioner2', '12345', 2),
+	('answerer1', '12345', 3),
+	('answerer2', '12345', 3);
+
+
+
+CREATE TABLE topic (
+    topic_id int PRIMARY KEY IDENTITY(1,1),
+    topic_name VARCHAR(100) NOT NULL
+)
+INSERT INTO topic (topic_name) VALUES
+( N'Mathematics'),
+( N'Geography'),
+( N'Science'),
+( N'Music'),
+( N'Sports'),
+(N'Others');
+
+
+create table quiz(
+	quiz_id INT PRIMARY KEY IDENTITY(1,1),
+	quiz_name VARCHAR(100) NOT NULL,
+	topic_id int ,
+	questioner_id int ,
+	is_public bit NOT NULL,
+	enrol_key NVARCHAR(255) NULL
+	FOREIGN KEY (topic_id) REFERENCES topic (topic_id),
+	FOREIGN KEY (questioner_id) REFERENCES users (user_id)
+)
+
+Create table question(
+	question_id INT PRIMARY KEY IDENTITY(1,1),
+	question_content VARCHAR(100) NOT NULL,
+	question_key bit NOT NULL,
+	quiz_id int 
+	FOREIGN KEY(quiz_id) REFERENCES quiz(quiz_id)
+)
+
+create table quiz_answerer(
+	id INT PRIMARY KEY IDENTITY(1,1),
+	quiz_id int ,  
+	answerer_id int, 
+	mark decimal(10,2) NOT NULL,
+	FOREIGN KEY(quiz_id) REFERENCES quiz(quiz_id),
+	FOREIGN KEY(answerer_id) REFERENCES users(user_id)
+)
+
+-- Chèn dữ liệu vào bảng quiz
+INSERT INTO quiz (quiz_name, topic_id, questioner_id, is_public, enrol_key) VALUES
+('happy with basic math', 1, 2, 0, 'a12'),
+('capitals in the world', 2, 2, 1, NULL),
+('science quiz chill', 5, 2, 0, '5b6'),
+('Vietnamese music', 4, 2, 1, NULL),
+('ai thong minh hoc sinh lop 5', 1, 3, 1, NULL);
+
+-- Chèn dữ liệu vào bảng question
+INSERT INTO question (question_content, question_key, quiz_id) VALUES
+('2 + 2 = 5', 0, 1),
+('2 + 2 = 4', 1, 1),
+('1 + 1 = 3', 0, 1),
+('1 + 1 = 2', 1, 1),
+('London is the capital of France', 0, 2),
+('London is the capital of England', 1, 2),
+('Pari is the capital of France', 1, 2),
+('Hanoi is the capital of Viet Nam', 1, 2),
+('h20 is a dangerous substance', 0, 3),
+('we can eat axit', 0, 3),
+('h20 is a dangerous substance', 0, 3),
+('h20 is a dangerous substance', 0, 3),
+('Son Tung MTP is dinh cua chop', 1, 4),
+('Jack is 5M', 1, 4),
+('Em khong la nang tho', 0, 4),
+('The gioi nay lam ton thuong em bao nhieu, anh se yeu em nhieu gap doi nhu vay', 1, 4),
+('1 = 1', 1, 5),
+('1 > 1', 0, 5),
+('1 < 1', 0, 5),
+('1 != 1', 0, 5);
+
+-- Chèn dữ liệu vào bảng quiz_answerer
+INSERT INTO quiz_answerer (quiz_id, answerer_id, mark) VALUES
+(1, 4, 50),
+(1, 5, 75),
+(1, 4, 75),
+(2, 4, 100),
+(5, 4, 100);
